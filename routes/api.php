@@ -43,6 +43,10 @@ Route::prefix('products')->group(function () {
     Route::get('/{product}', [ProductController::class, 'show']);
 });
 
+Route::prefix('cart')->group(function () {
+    Route::get('/view', [CartController::class, 'index']);
+});
+
 /*
 |--------------------------------------------------------------------------
 | Authenticated API Routes
@@ -52,7 +56,6 @@ Route::prefix('products')->group(function () {
 Route::middleware(['auth'])->group(function () {
     // Cart management
     Route::prefix('cart')->group(function () {
-        Route::get('/', [CartController::class, 'index']);
         Route::post('/add', [CartController::class, 'addItem']);
         Route::put('/items/{cartItem}', [CartController::class, 'updateItem']);
         Route::delete('/items/{cartItem}', [CartController::class, 'removeItem']);

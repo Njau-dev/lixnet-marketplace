@@ -60,6 +60,13 @@
     --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
     --color-sidebar-border: var(--sidebar-border);
     --color-sidebar-ring: var(--sidebar-ring);
+--color-background-color: var(--background-color);
+    --color-card-color: var(--card-color);
+    --color-border-color: var(--border-color);
+    --color-brand-blue: var(--brand-blue);
+    --color-dark-blue: var(--dark-blue);
+    --color-text-dark: var(--text-dark);
+    --color-blue-black: var(--blue-black);
 }
 
 :root {
@@ -96,6 +103,14 @@
     --sidebar-accent-foreground: oklch(0.205 0 0);
     --sidebar-border: oklch(0.922 0 0);
     --sidebar-ring: oklch(0.87 0 0);
+/* marketplace colors */
+    --background-color: #f8f9fa;
+    --card-color: #ffffff;
+    --border-color: #e0e0e0;
+    --brand-blue: #0066cc;
+    --dark-blue: #00264d;
+    --text-dark: #101828;
+    --blue-black: #001a33;
 }
 
 .dark {

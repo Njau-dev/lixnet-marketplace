@@ -1,5 +1,4 @@
 import { useState, useEffect, use } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { AlertCircle } from 'lucide-react';
@@ -7,6 +6,8 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { MarketplaceLayout } from '@/layouts/marketplace-layout';
 import { ProductCard } from '@/components/marketplace/product-card';
 import { router } from '@inertiajs/react';
+import { useAuth } from '@/context/auth-context';
+import toast from 'react-hot-toast';
 
 interface Product {
     id: number;
@@ -37,12 +38,12 @@ export default function Marketplace() {
     const [error, setError] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('all');
-    // const nav = useNavigate();
-
+    const { logout, checkAuth, user } = useAuth();
 
     // Fetch products on mount
     useEffect(() => {
         fetchProducts();
+        checkAuth();
     }, []);
 
     // Update filtered products when products, search, or category changes
@@ -116,18 +117,18 @@ export default function Marketplace() {
     };
 
     const handleCartClick = () => {
-        // navigate to cart
         router.visit('/cart');
     };
 
     const handleLoginClick = () => {
-        // Navigate to login page
-        router.visit('/login');
+        // log out user from previous session if available or redirect to login
+        user ? logout() : router.visit('/login');
     };
 
     const handleAddToCart = (product: Product) => {
         // You can add any additional logic here like showing a toast notification
         console.log('Added to cart:', product.title);
+        toast.success(`Added to cart: ${product.title}`);
     };
 
     const renderProductGrid = () => {

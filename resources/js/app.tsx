@@ -7,6 +7,7 @@ import { initializeTheme } from './hooks/use-appearance';
 import { AuthProvider } from './context/auth-context';
 import { CartProvider } from './context/cart-context';
 import { BrowserRouter } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -19,11 +20,12 @@ createInertiaApp({
         root.render(
 
             <BrowserRouter>
-                <AuthProvider>
-                    <CartProvider>
+                <CartProvider>
+                    <AuthProvider>
                         <App {...props} />
-                    </CartProvider>
-                </AuthProvider>
+                        <Toaster position='top-center' />
+                    </AuthProvider>
+                </CartProvider>
             </BrowserRouter>
         );
     },

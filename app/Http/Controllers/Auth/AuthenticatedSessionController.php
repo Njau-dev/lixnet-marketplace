@@ -14,7 +14,7 @@ use Inertia\Response;
 class AuthenticatedSessionController extends Controller
 {
     /**
-     * Show the login page.
+     * Show the login page (Inertia).
      */
     public function create(Request $request): Response
     {
@@ -27,24 +27,45 @@ class AuthenticatedSessionController extends Controller
     /**
      * Handle an incoming authentication request.
      */
-    public function store(LoginRequest $request): RedirectResponse
+    public function store(LoginRequest $request)
     {
         $request->authenticate();
-
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        $user = Auth::user();
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'user' => $user,
+                'redirect' => $user->role === 'admin'
+                    ? route('dashboard')
+                    : route('marketplace'),
+            ]);
+        }
+
+        if ($user->role === 'admin') {
+            return redirect()->intended(route('dashboard', absolute: false));
+        }
+
+        return redirect()->route('marketplace');
     }
 
     /**
      * Destroy an authenticated session.
      */
-    public function destroy(Request $request): RedirectResponse
+    public function destroy(Request $request)
     {
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => 'Logged out',
+                'redirect' => route('login')
+            ]);
+        }
 
         return redirect('/');
     }

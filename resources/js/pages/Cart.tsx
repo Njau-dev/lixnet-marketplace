@@ -7,55 +7,48 @@ import { Minus, Plus, Trash2, ShoppingBag, MessageCircle, Briefcase, PiggyBank, 
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useCart } from '@/context/cart-context';
 import { MarketplaceLayout } from '@/layouts/marketplace-layout';
+import { router } from '@inertiajs/react';
+import { useAuth } from '@/context/auth-context';
+import toast from 'react-hot-toast';
+import Breadcrumbs from '@/components/ui/user-breadcrumbs';
 
-interface CartPageProps {
-    onContinueShopping?: () => void;
-}
-
-export default function Cart({ onContinueShopping }: CartPageProps) {
+export default function Cart() {
     const { state, updateQuantity, removeItem, clearCart } = useCart();
-    const [isGeneratingMessage, setIsGeneratingMessage] = useState(false);
+    const { user, isLoading, logout } = useAuth();
 
     const formatPrice = (price: number) => {
         return `KSh ${price.toLocaleString()}`;
     };
 
-    const generateWhatsAppMessage = () => {
-        if (state.items.length === 0) return '';
+    const onCheckoutClick = () => {
+        if (isLoading) {
+            toast("Checking authentication, please wait…");
+            return;
+        }
 
-        const businessNumber = '254752821282'; // Replace with actual WhatsApp Business number
-        let message = '🛒 *Lixnet Software Inquiry*\n\n';
-        message += 'Hello! I\'m interested in the following software solutions:\n\n';
+        if (!user) {
+            // Guest: show feedback then redirect to login
+            toast.error("You must create an account to complete a purchase.");
+            // include redirect back to checkout so you can return user after login
+            const redirectPath = encodeURIComponent("/checkout");
+            router.visit(`/login?redirect=${redirectPath}`);
+            return;
+        }
 
-        state.items.forEach((item, index) => {
-            message += `${index + 1}. *${item.product.title}*\n`;
-            message += `   • Quantity: ${item.quantity}\n`;
-            message += `   • Price: ${formatPrice(item.product.price)}/month\n`;
-            message += `   • Subtotal: ${formatPrice(item.product.price * item.quantity)}/month\n\n`;
-        });
-
-        message += `💰 *Total: ${formatPrice(state.totalValue)}/month*\n\n`;
-        message += 'Could you please provide more information about:\n';
-        message += '• Setup process and timeline\n';
-        message += '• Training and support options\n';
-        message += '• Any available discounts\n\n';
-        message += 'Thank you!';
-
-        return `https://wa.me/${businessNumber}?text=${encodeURIComponent(message)}`;
+        // Authenticated: proceed to checkout page (Inertia page)
+        router.visit("/checkout");
     };
 
-    const handleWhatsAppCheckout = () => {
-        setIsGeneratingMessage(true);
-
-        // Simulate a small delay for better UX
-        setTimeout(() => {
-            const whatsappUrl = generateWhatsAppMessage();
-            window.open(whatsappUrl, '_blank');
-            setIsGeneratingMessage(false);
-        }, 500);
+    const handleCartClick = () => {
+        // navigate to cart
+        router.visit('/cart');
     };
 
-    const handleQuantityChange = (itemId: string, newQuantity: number) => {
+    const handleLoginClick = () => {
+        user ? logout() : router.visit('/login');
+    };
+
+    const handleQuantityChange = (itemId: number, newQuantity: number) => {
         if (newQuantity < 1) {
             removeItem(itemId);
         } else {
@@ -64,7 +57,7 @@ export default function Cart({ onContinueShopping }: CartPageProps) {
     };
 
     const handleContinueShopping = () => {
-        onContinueShopping?.();
+        router.visit('/');
     };
 
     function getProductIcon(categoryName: string) {
@@ -108,8 +101,21 @@ export default function Cart({ onContinueShopping }: CartPageProps) {
     }
 
     return (
-        <MarketplaceLayout>
+        <MarketplaceLayout
+            onCartClick={handleCartClick}
+            onLoginClick={handleLoginClick}
+
+        >
             <div className="max-w-6xl mx-auto px-4 py-8">
+                {/* Breadcrumbs */}
+                <div className="mb-4">
+                    <Breadcrumbs
+                        items={[
+                            // { label: 'Home', href: '/' },
+                            { label: 'Cart' }
+                        ]}
+                    />
+                </div>
                 <div className="mb-8">
                     <h1 className="text-3xl font-bold text-dark-blue">Shopping Cart</h1>
                     <p className="text-gray-600 mt-2">
@@ -165,7 +171,7 @@ export default function Cart({ onContinueShopping }: CartPageProps) {
                                             {/* Price and Quantity */}
                                             <div className="text-right space-y-2">
                                                 <div className="font-semibold text-dark-blue">
-                                                    {formatPrice(item.product.price)}/mo
+                                                    {formatPrice(item.product.price)}
                                                 </div>
 
                                                 {/* Quantity Controls */}
@@ -173,7 +179,7 @@ export default function Cart({ onContinueShopping }: CartPageProps) {
                                                     <Button
                                                         size="sm"
                                                         variant="outline"
-                                                        onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
+                                                        onClick={() => handleQuantityChange(Number(item.id), item.quantity - 1)}
                                                         className="w-8 h-8 p-0 bg-background-color border border-border-color"
                                                     >
                                                         <Minus className="w-3 h-3" />
@@ -186,7 +192,7 @@ export default function Cart({ onContinueShopping }: CartPageProps) {
                                                     <Button
                                                         size="sm"
                                                         variant="outline"
-                                                        onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
+                                                        onClick={() => handleQuantityChange(Number(item.id), item.quantity + 1)}
                                                         className="w-8 h-8 p-0 bg-background-color border border-border-color"
                                                     >
                                                         <Plus className="w-3 h-3" />
@@ -195,14 +201,14 @@ export default function Cart({ onContinueShopping }: CartPageProps) {
 
                                                 {/* Subtotal */}
                                                 <div className="text-sm text-gray-500">
-                                                    Subtotal: {formatPrice(item.product.price * item.quantity)}/mo
+                                                    Subtotal: {formatPrice(item.product.price * item.quantity)}
                                                 </div>
 
                                                 {/* Remove Button */}
                                                 <Button
                                                     size="sm"
                                                     variant="ghost"
-                                                    onClick={() => removeItem(item.id)}
+                                                    onClick={() => removeItem(Number(item.id))}
                                                     className="text-red-600 hover:text-red-700 hover:bg-red-50"
                                                 >
                                                     <Trash2 className="w-4 h-4" />
@@ -225,14 +231,14 @@ export default function Cart({ onContinueShopping }: CartPageProps) {
                                 <div className="space-y-2">
                                     <div className="flex justify-between text-sm">
                                         <span>Items ({state.totalItems}):</span>
-                                        <span>{formatPrice(state.totalValue)}/mo</span>
+                                        <span>{formatPrice(state.totalValue)}</span>
                                     </div>
 
                                     <Separator className='bg-border-color' />
 
                                     <div className="flex justify-between font-semibold text-lg">
                                         <span>Total:</span>
-                                        <span className="text-dark-blue">{formatPrice(state.totalValue)}/mo</span>
+                                        <span className="text-dark-blue">{formatPrice(state.totalValue)}</span>
                                     </div>
                                 </div>
 
@@ -244,20 +250,14 @@ export default function Cart({ onContinueShopping }: CartPageProps) {
                                 </Alert>
 
                                 <div className="space-y-3">
+                                    {/* Checkout button */}
                                     <Button
-                                        onClick={handleWhatsAppCheckout}
-                                        disabled={isGeneratingMessage}
+                                        onClick={onCheckoutClick}
                                         className="w-full bg-green-600 hover:bg-green-700 text-white py-3"
                                     >
-                                        {isGeneratingMessage ? (
-                                            'Generating Message...'
-                                        ) : (
-                                            <>
-                                                <MessageCircle className="w-4 h-4 mr-2" />
-                                                Checkout via WhatsApp
-                                            </>
-                                        )}
+                                        Proceed to Checkout
                                     </Button>
+
 
                                     <Button
                                         variant="outline"

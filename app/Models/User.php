@@ -21,6 +21,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
+        'phone',
+        'company',
     ];
 
     /**
@@ -44,5 +47,77 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Get the orders for the user.
+     */
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
+    /**
+     * Get the user's completed orders.
+     */
+    public function completedOrders()
+    {
+        return $this->orders()->whereIn('status', ['completed', 'paid']);
+    }
+
+    /**
+     * Get the user's pending orders.
+     */
+    public function pendingOrders()
+    {
+        return $this->orders()->where('status', 'pending');
+    }
+
+    /**
+     * Get total amount spent by the user.
+     */
+    public function getTotalSpentAttribute()
+    {
+        return $this->completedOrders()->sum('total_amount');
+    }
+
+    /**
+     * Get total number of orders.
+     */
+    public function getTotalOrdersAttribute()
+    {
+        return $this->orders()->count();
+    }
+
+    /**
+     * Check if user has verified email.
+     */
+    public function hasVerifiedEmail()
+    {
+        return !is_null($this->email_verified_at);
+    }
+
+    /**
+     * Get user's full display name.
+     */
+    public function getDisplayNameAttribute()
+    {
+        return $this->name ?: 'User #' . str_pad($this->id, 6, '0', STR_PAD_LEFT);
+    }
+
+    /**
+     * Scope a query to only include verified users.
+     */
+    public function scopeVerified($query)
+    {
+        return $query->whereNotNull('email_verified_at');
+    }
+
+    /**
+     * Scope a query to only include users with orders.
+     */
+    public function scopeWithOrders($query)
+    {
+        return $query->has('orders');
     }
 }

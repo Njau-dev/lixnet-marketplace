@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { useCart } from '@/context/cart-context';
 import { useAuth } from '@/context/auth-context';
+import { Link } from '@inertiajs/react';
 
 interface Category {
     id: number;
@@ -60,12 +61,15 @@ export function MarketplaceHeader({
                 <div className="max-w-7xl mx-auto flex items-center justify-between flex-wrap gap-4">
                     {/* Logo */}
                     <div className="flex items-center">
-                        <div className="bg-dark-blue px-3 py-2 rounded">
-                            <div className="flex flex-col leading-tight">
-                                <span className="text-xl font-bold">LIXNET</span>
-                                <span className="text-xs tracking-wider">TECHNOLOGIES</span>
+                        <Link href="/" className="flex items-center gap-2">
+                            <div className="h-20 w-20 overflow-hidden rounded">
+                                <img
+                                    src="/logo.JPG"
+                                    alt="Lixnet Logo"
+                                    className="w-full h-full object-cover mix-blend-multiply hover:scale-105 transition duration-300 ease-in-out"
+                                />
                             </div>
-                        </div>
+                        </Link>
                     </div>
 
                     {/* Location */}
@@ -130,11 +134,11 @@ export function MarketplaceHeader({
 
                                 {showDropdown && (
                                     <div className="absolute right-0 top-full mt-2 w-48 bg-card-color rounded-md shadow-lg py-1 z-50">
-                                        <a href="/dashboard" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                            Dashboard
-                                        </a>
-                                        <a href="/settings/profile" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        <a href="/profile" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                                             Profile
+                                        </a>
+                                        <a href="/orders" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                            Orders
                                         </a>
                                         <button
                                             onClick={handleSignOut}

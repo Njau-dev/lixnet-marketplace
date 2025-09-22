@@ -34,6 +34,7 @@ import {
 } from 'lucide-react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import { router } from '@inertiajs/react';
 
 interface OrderItem {
     id: number;
@@ -133,6 +134,10 @@ export function OrderHistory() {
             handleSearch();
         }
     };
+
+    const handleViewOrders = () => {
+        router.visit('/orders')
+    }
 
     const clearSearch = () => {
         setSearchInput('');
@@ -345,6 +350,7 @@ export function OrderHistory() {
                                                     variant="ghost"
                                                     size="sm"
                                                     className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                                                    onClick={handleViewOrders}
                                                 >
                                                     <Eye className="w-4 h-4 mr-1" />
                                                     View
@@ -397,6 +403,7 @@ export function OrderHistory() {
                                                 variant="outline"
                                                 size="sm"
                                                 className="text-blue-600 border-blue-200 hover:bg-blue-50"
+                                                onClick={handleViewOrders}
                                             >
                                                 <Eye className="w-4 h-4 mr-1" />
                                                 View Details

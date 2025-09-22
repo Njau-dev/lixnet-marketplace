@@ -127,11 +127,14 @@ export default function Marketplace() {
 
     const handleAddToCart = (product: Product) => {
         // You can add any additional logic here like showing a toast notification
-        console.log('Added to cart:', product.title);
         toast.success(`Added to cart: ${product.title}`);
     };
 
     const renderProductGrid = () => {
+
+        // sort products by id
+        const sortedProducts = filteredProducts.sort((a, b) => a.id - b.id);
+
         if (isLoading) {
             return (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -167,7 +170,7 @@ export default function Marketplace() {
             );
         }
 
-        if (filteredProducts.length === 0) {
+        if (sortedProducts.length === 0) {
             return (
                 <div className="text-center py-12">
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">
@@ -199,7 +202,7 @@ export default function Marketplace() {
 
         return (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredProducts.map((product) => (
+                {sortedProducts.map((product) => (
                     <ProductCard
                         key={product.id}
                         product={product}

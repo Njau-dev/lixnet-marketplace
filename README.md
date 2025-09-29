@@ -30,37 +30,37 @@ Laravel provides the backend, while React (via the official Laravel frontend sca
    ```
    
 3. **Configure environment**
-  ```
-  cp .env.example .env
-  php artisan key:generate
-  ```
+    ```
+    cp .env.example .env
+    php artisan key:generate
+    ```
 
 4. **Create a MySQL database**
-  ```
-  mysql -u root -p
-  CREATE DATABASE lixnet_marketplace;
-  EXIT;
-  ```
+    ```
+    mysql -u root -p
+    CREATE DATABASE lixnet_marketplace;
+    EXIT;
+    ```
 
 5. **Configure .env Credentials**
-  ```
-  DB_CONNECTION=mysql
-  DB_HOST=127.0.0.1
-  DB_PORT=3306
-  DB_DATABASE=lixnet_marketplace
-  DB_USERNAME=root
-  DB_PASSWORD=your_password
-  ```
+    ```
+    DB_CONNECTION=mysql
+    DB_HOST=127.0.0.1
+    DB_PORT=3306
+    DB_DATABASE=lixnet_marketplace
+    DB_USERNAME=root
+    DB_PASSWORD=your_password
+    ```
 
 6. **Run migrations and seeders**
-  ```
-  php artisan migrate --seed
-  ```
+    ```
+    php artisan migrate --seed
+    ```
 
 7. **Start the development server**
-   ```
+    ```
     Composer run dev
-   ```
+    ```
 
 
    The project will be available at 👉 http://localhost:8000

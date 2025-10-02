@@ -1,11 +1,14 @@
 <?php
 
+use App\Http\Controllers\AdminUserController;
+use App\Http\Controllers\AgentApplicationController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PesapalCallbackController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\UserController;
+use App\Http\Middleware\CheckAdminRole;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -90,6 +93,12 @@ Route::middleware(['web', 'auth'])->group(function () {
         Route::delete('/account', [UserController::class, 'deleteAccount']);
         Route::put('/change-password', [UserController::class, 'changePassword']);
     });
+
+    // Agent application management
+    Route::prefix('agent-application')->group(function () {
+        Route::get('/status', [AgentApplicationController::class, 'status']);
+        Route::post('/submit', [AgentApplicationController::class, 'submit']);
+    });
 });
 
 /*
@@ -98,18 +107,25 @@ Route::middleware(['web', 'auth'])->group(function () {
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth', 'admin'])->group(function () {
+Route::middleware(['web', 'auth', 'verified', CheckAdminRole::class])->prefix('admin')->group(function () {
     // Category management (admin only)
-    Route::prefix('admin/categories')->group(function () {
+    Route::prefix('categories')->group(function () {
         Route::post('/', [CategoryController::class, 'store']);
         Route::put('/{category}', [CategoryController::class, 'update']);
         Route::delete('/{category}', [CategoryController::class, 'destroy']);
     });
 
     // Product management (admin only)
-    Route::prefix('admin/products')->group(function () {
+    Route::prefix('products')->group(function () {
         Route::post('/', [ProductController::class, 'store']);
         Route::put('/{product}', [ProductController::class, 'update']);
         Route::delete('/{product}', [ProductController::class, 'destroy']);
+    });
+
+    // User management (admin only)
+    Route::prefix('users')->group(function () {
+        Route::get('/', [AdminUserController::class, 'index'])->name('admin.users.index');
+        Route::get('/{user}', [AdminUserController::class, 'show'])->name('admin.users.show');
+        Route::get('/{user}/orders', [AdminUserController::class, 'orders'])->name('admin.users.orders');
     });
 });

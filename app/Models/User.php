@@ -90,6 +90,30 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the user's agent application.
+     */
+    public function agentApplication()
+    {
+        return $this->hasOne(AgentApplication::class);
+    }
+
+    /**
+     * Get the user's agent.
+     */
+    public function agent()
+    {
+        return $this->hasOne(Agent::class);
+    }
+
+    /**
+     * Check if user is an agent.
+     */
+    public function isAgent()
+    {
+        return $this->role === 'agent';
+    }
+
+    /**
      * Check if user has verified email.
      */
     public function hasVerifiedEmail()

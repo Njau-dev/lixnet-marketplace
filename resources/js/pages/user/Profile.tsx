@@ -31,6 +31,7 @@ import toast from 'react-hot-toast';
 import axios from 'axios';
 import { OrderHistory } from '@/components/order-history';
 import Breadcrumbs from '@/components/ui/user-breadcrumbs';
+import AgentApplicationStatus from '@/components/marketplace/AgentApplicationStatus';
 
 interface UserProfile {
     id: number;
@@ -190,6 +191,10 @@ export default function Profile() {
         }
     };
 
+    const handleApplyAsAgent = () => {
+        router.visit('/sales-registration');
+    };
+
     const handleLoginClick = () => {
         // log out user from previous session if available or redirect to login
         user ? logout() : router.visit('/login');
@@ -327,6 +332,9 @@ export default function Profile() {
                         </div>
                     )}
                 </div>
+
+                {/* 👇 INSERT THE AGENT APPLICATION STATUS COMPONENT HERE */}
+                <AgentApplicationStatus onApplyClick={handleApplyAsAgent} />
 
                 {/* Profile Information */}
                 <Card className="bg-white border border-slate-200 shadow-sm mb-8">
@@ -539,6 +547,7 @@ export default function Profile() {
                         )}
                     </CardContent>
                 </Card>
+
                 <OrderHistory />
             </div>
         </MarketplaceLayout>

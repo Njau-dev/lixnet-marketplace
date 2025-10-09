@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\CheckAdminRole;
+use App\Models\AgentApplication;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -56,8 +57,14 @@ Route::middleware(['auth', 'verified', CheckAdminRole::class])->prefix('admin')-
     })->name('admin.userdetails');
 
     Route::get('agent-applications', function () {
-        return Inertia::render('admin/agent-applications');
+        return Inertia::render('admin/agent-applications/index');
     })->name('admin.agent-applications');
+
+    Route::get('agent-applications/{application}', function (AgentApplication $application) {
+        return Inertia::render('admin/agent-applications/show', [
+            'applicationId' => $application->id,
+        ]);
+    })->name('admin.agent-applications.show');
 });
 
 require __DIR__.'/settings.php';

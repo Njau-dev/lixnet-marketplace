@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AgentApplicationController as AdminAgentApplicationController;
 use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\AgentApplicationController;
 use App\Http\Controllers\OrderController;
@@ -127,5 +128,14 @@ Route::middleware(['web', 'auth', 'verified', CheckAdminRole::class])->prefix('a
         Route::get('/', [AdminUserController::class, 'index'])->name('admin.users.index');
         Route::get('/{user}', [AdminUserController::class, 'show'])->name('admin.users.show');
         Route::get('/{user}/orders', [AdminUserController::class, 'orders'])->name('admin.users.orders');
+    });
+
+    //Agent management (admin only)
+    Route::prefix('agent-applications')->group(function () {
+        Route::get('/list', [AdminAgentApplicationController::class, 'index'])->name('admin.agent-applications.index');
+        Route::get('/details/{application}', [AdminAgentApplicationController::class, 'show'])->name('admin.agent-applications.show');
+        Route::post('/{application}/approve', [AdminAgentApplicationController::class, 'approve'])->name('admin.agent-applications.approve');
+        Route::post('/{application}/reject', [AdminAgentApplicationController::class, 'reject'])->name('admin.agent-applications.reject');
+        Route::get('/{application}/documents/{documentType}', [AdminAgentApplicationController::class, 'downloadDocument'])->name('admin.agent-applications.download-documents');
     });
 });

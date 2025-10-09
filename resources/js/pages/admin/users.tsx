@@ -17,6 +17,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Skeleton } from '@/components/ui/skeleton';
 import { Search, Eye, ChevronRight } from 'lucide-react';
 import { dashboard } from '@/routes';
+import axios from 'axios';
 
 interface User {
     id: number;
@@ -77,18 +78,14 @@ export default function AdminUsers() {
             if (roleFilter !== 'all') params.append('role', roleFilter);
             if (verifiedFilter !== 'all') params.append('verified', verifiedFilter);
 
-            const response = await fetch(`/admin/users?${params}`, {
+            const response = await axios.get(`/admin/users?${params}`, {
                 headers: {
                     'Accept': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest',
                 },
             });
 
-            if (!response.ok) {
-                throw new Error('Failed to fetch users');
-            }
-
-            const data = await response.json();
+            const data = response.data;
 
             setUsers(data.users.data);
             setPagination({

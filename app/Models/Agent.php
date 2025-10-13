@@ -14,16 +14,10 @@ class Agent extends Model
         'user_id',
         'application_id',
         'agent_code',
-        'commission_rate',
-        'total_sales',
-        'total_commission',
         'is_active',
     ];
 
     protected $casts = [
-        'commission_rate' => 'decimal:2',
-        'total_sales' => 'decimal:2',
-        'total_commission' => 'decimal:2',
         'is_active' => 'boolean',
     ];
 
@@ -38,6 +32,7 @@ class Agent extends Model
         });
     }
 
+    // Relationships
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -46,5 +41,20 @@ class Agent extends Model
     public function application()
     {
         return $this->belongsTo(AgentApplication::class, 'application_id');
+    }
+
+    public function commissions()
+    {
+        return $this->hasMany(Commission::class);
+    }
+
+    public function currentCommission()
+    {
+        return $this->hasOne(Commission::class)->latestOfMany();
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
     }
 }

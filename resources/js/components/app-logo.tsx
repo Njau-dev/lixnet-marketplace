@@ -5,7 +5,7 @@ export default function AppLogo() {
         <>
             <div className="flex aspect-square size-8 items-center justify-center rounded-md bg-sidebar-primary text-sidebar-primary-foreground overflow-hidden">
                 <img
-                    src="/logo-icon.png"
+                    src="/favicon.png"
                     alt="Lixnet Logo"
                     className="h-full w-full object-cover object-top"
                 />

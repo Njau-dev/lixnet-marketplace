@@ -39,13 +39,13 @@ Route::middleware('auth')->group(function () {
 });
 
 // admin routes
-Route::middleware(['auth', 'verified', CheckAdminRole::class])->group(function () {
+Route::middleware(['auth', 'verified', 'admin'])->group(function () {
     Route::get('dashboard', function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
 });
 
-Route::middleware(['auth', 'verified', CheckAdminRole::class])->prefix('admin')->group(function () {
+Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(function () {
     Route::get('users-list', function () {
         return Inertia::render('admin/users');
     })->name('admin.userlist');

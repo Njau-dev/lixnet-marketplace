@@ -14,6 +14,7 @@ class CheckAdminRole
             return $next($request);
         }
 
+        session()->flash('error', 'You do not have permission to access admin pages.');
         return redirect()->route('marketplace');
     }
 }

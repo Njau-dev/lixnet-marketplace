@@ -57,4 +57,9 @@ class Agent extends Model
     {
         return $this->hasMany(Order::class);
     }
+
+    public function tier()
+    {
+        return $this->belongsTo(AgentTier::class, 'agent_id');
+    }
 }

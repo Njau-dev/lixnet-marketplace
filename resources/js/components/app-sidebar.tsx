@@ -7,38 +7,65 @@ import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
 import { BookOpen, Folder, LayoutGrid, User, UserPen, Users } from 'lucide-react';
 import AppLogo from './app-logo';
+import { useAuth } from '@/context/auth-context';
+import { use, useEffect } from 'react';
 
-const mainNavItems: NavItem[] = [
-    {
-        title: 'Dashboard',
-        href: dashboard(),
-        icon: LayoutGrid,
-    },
-    {
-        title: 'User Management',
-        icon: Users,
-        href: '/admin',
-        dropdown: true,
-        items: [
-            {
-                title: 'Users',
-                href: '/admin/users-list',
-                icon: User,
-            },
-            {
-                title: 'Agent Applications',
-                href: '/admin/agent-applications',
-                icon: UserPen,
-            },
-        ],
-    }
-];
-
-const footerNavItems: NavItem[] = [
-
-];
 
 export function AppSidebar() {
+    const { user, checkAuth } = useAuth();
+
+    useEffect(() => {
+        checkAuth();
+    }, []);
+
+    const mainNavItems = user?.role === "admin"
+        ? [
+            {
+                title: 'Dashboard',
+                href: dashboard(),
+                icon: LayoutGrid,
+            },
+            {
+                title: 'User Management',
+                icon: Users,
+                href: '/admin',
+                dropdown: true,
+                items: [
+                    {
+                        title: 'Users',
+                        href: '/admin/users-list',
+                        icon: User,
+                    },
+                    {
+                        title: 'Agent Applications',
+                        href: '/admin/agent-applications',
+                        icon: UserPen,
+                    },
+                ],
+            }
+        ]
+        : [
+            {
+                title: 'Dashboard',
+                href: '/agent/dashboard',
+                icon: LayoutGrid,
+            },
+            {
+                title: 'Sales',
+                href: '/agent/sales',
+                icon: Folder,
+            },
+            {
+                title: 'Earnings',
+                href: '/agent/earnings',
+                icon: BookOpen,
+            },
+        ];
+
+    const footerNavItems: NavItem[] = [
+
+    ];
+
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>

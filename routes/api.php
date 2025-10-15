@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Admin\AgentApplicationController as AdminAgentApplicationController;
 use App\Http\Controllers\AdminUserController;
+use App\Http\Controllers\Agent\DashboardController;
+use App\Http\Controllers\Agent\SalesController;
 use App\Http\Controllers\AgentApplicationController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PesapalCallbackController;
@@ -9,7 +11,6 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\UserController;
-use App\Http\Middleware\CheckAdminRole;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -17,22 +18,17 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 | API Routes
 |--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
-|
 */
-
-Route::middleware(['web', 'auth'])->get('/user', function (Request $request) {
-    return $request->user();
-});
 
 /*
 |--------------------------------------------------------------------------
 | Public API Routes (Guest Access)
 |--------------------------------------------------------------------------
 */
+
+Route::middleware(['web', 'auth'])->get('/user', function (Request $request) {
+    return $request->user();
+});
 
 // Categories
 Route::prefix('categories')->group(function () {
@@ -62,11 +58,11 @@ Route::prefix('pesapal')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| Authenticated API Routes
+| Customer API Routes
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['web', 'auth'])->group(function () {
+Route::middleware(['web', 'auth', 'customer'])->group(function () {
     // Cart management
     Route::prefix('cart')->group(function () {
         Route::get('/get', [CartController::class, 'index']);
@@ -104,11 +100,26 @@ Route::middleware(['web', 'auth'])->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| Admin Only API Routes (CRUD Operations)
+| Agent Only API Routes
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['web', 'auth', 'verified', CheckAdminRole::class])->prefix('admin')->group(function () {
+Route::middleware(['web', 'auth', 'agent'])->prefix('agent')->name('agent.')->group(function () {
+    // Dashboard
+    Route::get('dashboard-ui', [DashboardController::class, 'index'])->name('dashboard-ui');
+
+    // Sales
+    Route::get('sales-data', [SalesController::class, 'index'])->name('sales.index');
+    Route::get('sales-data/{orderId}', [SalesController::class, 'show'])->name('sales.show');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Admin Only API Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['web', 'auth', 'verified', 'admin'])->prefix('admin')->group(function () {
     // Category management (admin only)
     Route::prefix('categories')->group(function () {
         Route::post('/', [CategoryController::class, 'store']);

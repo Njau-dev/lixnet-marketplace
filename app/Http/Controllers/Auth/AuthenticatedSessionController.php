@@ -39,15 +39,27 @@ class AuthenticatedSessionController extends Controller
                 'user' => $user,
                 'redirect' => $user->role === 'admin'
                     ? route('dashboard')
-                    : route('marketplace'),
+                    : ($user->role === 'agent'
+                        ? route('agent.dashboard')
+                        : route('marketplace')),
             ]);
         }
 
-        if ($user->role === 'admin') {
-            return redirect()->intended(route('dashboard', absolute: false));
+        $redirectRoute = null;
+
+        switch ($user->role) {
+            case 'admin':
+                $redirectRoute = 'dashboard';
+                break;
+            case 'agent':
+                $redirectRoute = 'agent.dashboard';
+                break;
+            default:
+                $redirectRoute = 'marketplace';
+                break;
         }
 
-        return redirect()->route('marketplace');
+        return redirect()->intended(route($redirectRoute, absolute: false));
     }
 
     /**

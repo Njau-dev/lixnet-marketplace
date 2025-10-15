@@ -9,8 +9,6 @@ import { Textarea } from '@/components/ui/textarea';
 import {
     ShoppingBag,
     User,
-    Mail,
-    Phone,
     CreditCard,
     Lock,
     CheckCircle,

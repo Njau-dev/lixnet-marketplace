@@ -1,6 +1,7 @@
 import { ReactNode, useEffect, useState } from 'react';
 import { MarketplaceHeader } from './marketplace-header';
 import { MarketplaceFooter } from './marketplace-footer';
+import ShowFlashToast from './ShowFlashToast';
 
 interface Category {
     id: number;
@@ -64,6 +65,8 @@ export function MarketplaceLayout({
                 onCartClick={onCartClick}
                 onLoginClick={onLoginClick}
             />
+
+            <ShowFlashToast />
 
             <main className="flex-1">
                 {children}

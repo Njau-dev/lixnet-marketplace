@@ -51,9 +51,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const isAuthenticated = !!user;
     const { syncLocalCartToDatabase, loadCart } = useCart();
 
-    useEffect(() => {
-        checkAuth();
-    }, []);
 
     const checkAuth = async () => {
         try {
@@ -72,7 +69,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
             setIsLoading(false);
         }
     };
-
 
     const login = async (email: string, password: string) => {
         try {

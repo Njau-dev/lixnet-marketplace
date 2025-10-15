@@ -24,7 +24,6 @@ class OrderController extends Controller
 
     /**
      * Create order from checkout
-     * POST /api/orders
      */
     public function store(Request $request)
     {
@@ -112,7 +111,6 @@ class OrderController extends Controller
 
     /**
      * Get user's orders
-     * GET /api/orders
      */
     public function index(Request $request)
     {
@@ -146,7 +144,6 @@ class OrderController extends Controller
 
     /**
      * Get single order
-     * GET /api/orders/{id}
      */
     public function show($id)
     {
@@ -173,7 +170,6 @@ class OrderController extends Controller
 
     /**
      * Initiate payment for order
-     * POST /api/orders/{id}/pay
      */
     public function initiatePayment($id)
     {
@@ -195,7 +191,7 @@ class OrderController extends Controller
                 'currency' => $order->currency,
                 'amount' => $order->total_amount,
                 'description' => "Payment for Order #{$order->order_reference}",
-                'callback_url' => config('app.url') . '/api/pesapal/confirm', // This is where user goes after payment
+                'callback_url' => config('app.url') . '/api/pesapal/confirm',
                 'redirect_mode' => 'PARENT_WINDOW',
                 'notification_id' => config('pesapal.notification_id'),
                 'billing_address' => [
